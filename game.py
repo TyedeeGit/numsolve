@@ -19,33 +19,53 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
 from typing import Callable
 from abc import ABC, abstractmethod
-from command import Command
+from command import Command, invalid_usage
 
 default_help = (
     Command('help', ('help', 'help cmd'), description='Get information about a command, or list all commands.'),
+    Command('exit', ('exit',), aliases=('quit',), description='Exit the program.'),
+    Command('playing', ('playing',), description='Get information about the game you are currently playing'),
+    Command('games', ('games',), description='List all available games.'),
+    Command('start', ('start game_name',), description='Start a game. Use "games" to get a list of all available games.'),
+    Command('stop', ('stop',), description='Stop the current game.'),
     Command('add', ('add arg1 arg2',), description='Add two numbers.'),
     Command('sub', ('sub arg1 arg2',), description='Subtract two numbers.'),
     Command('mul', ('mul arg1 arg2',), description='Multiply two numbers.'),
     Command('div', ('div arg1 arg2',), description='Floor divides two numbers.'),
     Command('mod', ('mod arg1 arg2',), description='Modulo operation.'),
     Command('isqrt', ('isqrt arg',), description='Floored square root.'),
-    Command('exit', ('exit',), aliases=('quit',), description='Exit the program.'),
-    Command('playing', ('playing',), description='Get information about the game your playing')
 )
 
+
 class Game(ABC):
+    _name: str = 'game'
+    _about: str = 'Replace with a description of your game.'
     _help: tuple[Command] = default_help
-    def __init__(self, _exit_game: Callable, _default_game: 'Game'):
-        self._exit_game = _exit_game
+
+    def __init__(self, _default_game: 'Game'):
         self._default_game = _default_game
 
-    def exit_game(self):
-        self._exit_game()
+    def __eq__(self, other: 'Game'):
+        return self._name == other._name and self._about == other._about
+
+    def stop_game(self):
+        pass
 
     def process_command(self, cmd: str) -> bool:
         if self._default_game.process_command(cmd):
             return True
         return False
+
+    def handle_invalid_usage(self, cmd_name: str):
+        print(invalid_usage(self.get_command_by_name(cmd_name)))
+
+    def get_command_by_name(self, cmd_name: str) -> Command:
+        for cmd in self.help:
+            if cmd.name == cmd_name:
+                return cmd
+
+    @property
+    def help(self):
+        return self._help

@@ -22,15 +22,16 @@ SOFTWARE.
 
 from game import Game, default_help
 from command import Command
-from typing import Callable
 
 class ExampleGame(Game):
+    _name = 'example'
+    _about = 'Example game to help contributors make their own.'
     _help = default_help + (
         Command('example', ('example arg1 arg2',), aliases=('alias1', 'alias2'), description='Example command.'),
     )
 
-    def __init__(self, _exit_game: Callable, _default_game: Game):
-        super().__init__(_exit_game, _default_game)
+    def __init__(self, _default_game: Game):
+        super().__init__(_default_game)
         self.example_var = 2
 
     def example_command(self, arg1: str, arg2: str):
@@ -41,8 +42,10 @@ class ExampleGame(Game):
             return True
 
         match cmd.split(' '):
-            case 'example', arg1, arg2:
+            case ('example', arg1, arg2):
                 self.example_command(arg1, arg2)
+            case ('example', *_):
+                self.handle_invalid_usage('example')
             case _:
                 return False
         return True

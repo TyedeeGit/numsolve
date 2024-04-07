@@ -21,10 +21,47 @@ SOFTWARE.
 """
 
 from dataclasses import dataclass
+from sys import stderr
+
+TYPE_HELP_MSG = 'Type "help" for a list of commands.'
+
+def unknown_command():
+    print(f'Unknown command.\n{TYPE_HELP_MSG}')
+
+HELP_FORMAT = '''{name}: {description}
+    Aliases:
+{aliases}
+    Usages:
+{usages}
+'''
+
+HELP_FORMAT_NO_ALIASES = '''{name}: {description}
+    Usages:
+{usages}
+'''
 
 @dataclass
 class Command:
     name: str
-    usages: tuple[str]
-    aliases: tuple[str] = ()
+    usages: tuple[str, ...]
+    aliases: tuple[str, ...] = ()
     description: str = ""
+
+    def __str__(self):
+        aliases = '\n'.join(f'        {alias}' for alias in self.aliases)
+        usages = '\n'.join(f'        {usage}' for usage in self.usages)
+        if not aliases:
+            return HELP_FORMAT_NO_ALIASES.format(
+                name=self.name,
+                description=self.description,
+                usages=usages
+            )
+        return HELP_FORMAT.format(
+            name=self.name,
+            description=self.description,
+            aliases=aliases,
+            usages=usages
+        )
+
+def invalid_usage(cmd: Command) -> str:
+    return f'Valid usages:{"".join(f'\n    {usage}' for usage in cmd.usages)}'
