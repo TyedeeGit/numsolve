@@ -19,19 +19,30 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from game import Game
+
+from game import Game, default_help
+from command import Command
 from typing import Callable
 
+class ExampleGame(Game):
+    _help = default_help + (
+        Command('example', ('example arg1 arg2',), aliases=('alias1', 'alias2'), description='Example command.'),
+    )
 
-class DefaultGame(Game):
-    def __init__(self, _exit_game: Callable):
-        self._exit_game = _exit_game
+    def __init__(self, _exit_game: Callable, _default_game: Game):
+        super().__init__(_exit_game, _default_game)
+        self.example_var = 2
 
-    def process_command(self, cmd: str):
-        pass
+    def example_command(self, arg1: str, arg2: str):
+        print(f"You used 'example {arg1} {arg2}'!")
 
-def main():
-    pass
+    def process_command(self, cmd: str) -> bool:
+        if super().process_command(cmd):
+            return True
 
-if __name__ == '__main__':
-    main()
+        match cmd.split(' '):
+            case 'example', arg1, arg2:
+                self.example_command(arg1, arg2)
+            case _:
+                return False
+        return True

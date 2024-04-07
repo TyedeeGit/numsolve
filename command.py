@@ -19,19 +19,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from game import Game
-from typing import Callable
 
+from dataclasses import dataclass
 
-class DefaultGame(Game):
-    def __init__(self, _exit_game: Callable):
-        self._exit_game = _exit_game
-
-    def process_command(self, cmd: str):
-        pass
-
-def main():
-    pass
-
-if __name__ == '__main__':
-    main()
+@dataclass
+class Command:
+    name: str
+    usages: tuple[str]
+    aliases: tuple[str] = ()
+    description: str = ""
