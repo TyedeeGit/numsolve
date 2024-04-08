@@ -39,7 +39,8 @@ class PrimeFactors(Game):
     _help = default_help + (
         Command('generate', ('generate',), description='Generates a number to factorize. Time will start immediately after using this command.'),
         Command('difficulty', ('difficulty', 'difficulty <level>'), description='Sets the difficulty level if provided between 1 and 3. Default is 1.'),
-        Command('check', ('check <factors>',), description='Checks if you have all of the prime factors')
+        Command('check', ('check <factors>',), description='Checks if you have all of the prime factors'),
+        Command('answer', ('answer',), description='Gives you the answer.')
     )
 
     def __init__(self, _default_game: Game):
@@ -61,12 +62,20 @@ class PrimeFactors(Game):
 
     def check_factors(self, *factors: str):
         end_time = time.time()
-        expected_factors = {f'{prime}^{exponent}' for prime, exponent in zip(PRIMES, self.exponents) if exponent} | {prime for prime, exponent in zip(PRIMES, self.exponents) if exponent == 1}
-        failed = any(factor not in expected_factors for factor in factors)
+        expected_factors = {f'{prime}^{exponent}' for prime, exponent in zip(PRIMES, self.exponents) if exponent}
+        failed = any(factor not in expected_factors for factor in factors) or set(factors) ^ expected_factors
         if failed:
             print('Invalid factors! Try again')
         else:
             print(f'Good job! You factorized {self.number} in {round(end_time-self.start_time, 2)} seconds.')
+        self.number = 1
+
+    def give_answer(self):
+        end_time = time.time()
+        if self.number != 1:
+            print(f'The prime factorization of {self.number} = {" * ".join(f"{prime}^{exponent}" for prime, exponent in zip(PRIMES, self.exponents) if exponent)}')
+            print(f'You gave up within {round(end_time-self.start_time, 2)} seconds.')
+        self.number = 1
 
     def process_command(self, cmd: str) -> bool:
         if super().process_command(cmd):
@@ -77,8 +86,18 @@ class PrimeFactors(Game):
             case ('difficulty',):
                 print(f'The current difficulty is set to {self.difficulty + 1}')
             case ('difficulty', level):
-                self.difficulty = int(level) - 1
-                print(f'The current difficulty is set to {self.difficulty + 1}')
+                try:
+                    self.difficulty = int(level) - 1
+                except ValueError:
+                    self.handle_invalid_usage('difficulty')
+                else:
+                    print(f'The current difficulty is set to {self.difficulty + 1}')
+            case ('difficulty', *_):
+                self.handle_invalid_usage('difficulty')
+            case ('check', *factors):
+                self.check_factors(*factors)
+            case ('answer', *_):
+                self.give_answer()
             case _:
                 return False
         return True
