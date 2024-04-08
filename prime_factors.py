@@ -68,7 +68,7 @@ class PrimeFactors(Game):
             print('Invalid factors! Try again')
         else:
             print(f'Good job! You factorized {self.number} in {round(end_time-self.start_time, 2)} seconds.')
-        self.number = 1
+            self.number = 1
 
     def give_answer(self):
         end_time = time.time()
