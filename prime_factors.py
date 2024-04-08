@@ -72,6 +72,8 @@ class PrimeFactors(Game):
         if super().process_command(cmd):
             return True
         match cmd.split(' '):
+            case ('generate',):
+                self.generate_number()
             case _:
                 return False
         return True
