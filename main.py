@@ -58,7 +58,8 @@ class DefaultGame(Game):
                         found_command = True
                         break
                 if not found_command:
-                    unknown_command()
+                    print(f'No help message for "{command_name}".')
+                    print(TYPE_HELP_MSG)
             case ('help', *_):
                 self.handle_invalid_usage('help')
             case ('exit', *_) | ('quit', *_):
