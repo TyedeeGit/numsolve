@@ -19,8 +19,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Callable
-from abc import ABC, abstractmethod
 from command import Command, invalid_usage
 
 default_help = (
@@ -41,7 +39,7 @@ default_help = (
 )
 
 
-class Game(ABC):
+class Game:
     _name: str = 'game'
     _about: str = 'Replace with a description of your game.'
     _help: tuple[Command] = default_help
@@ -56,9 +54,7 @@ class Game(ABC):
         pass
 
     def process_command(self, cmd: str) -> bool:
-        if self._default_game.process_command(cmd):
-            return True
-        return False
+        return self._default_game.process_command(cmd)
 
     def handle_invalid_usage(self, cmd_name: str):
         print(invalid_usage(self.get_command_by_name(cmd_name)))

@@ -21,13 +21,13 @@ SOFTWARE.
 """
 
 from game import Game, default_help
-from command import Command
+from command import Command, split_command
 
 class ExampleGame(Game):
     _name = 'example'
     _about = 'Example game to help contributors make their own.'
     _help = default_help + (
-        Command('example', ('example arg1 arg2',), aliases=('alias1', 'alias2'), description='Example command.'),
+        Command('example', ('example <arg1> <arg2>',), aliases=('alias1', 'alias2'), description='Example command.'),
     )
 
     def __init__(self, _default_game: Game):
@@ -41,7 +41,7 @@ class ExampleGame(Game):
         if super().process_command(cmd):
             return True
 
-        match cmd.split(' '):
+        match split_command(cmd):
             case ('example', arg1, arg2):
                 self.example_command(arg1, arg2)
             case ('example', *_):

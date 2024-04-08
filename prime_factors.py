@@ -21,14 +21,14 @@ SOFTWARE.
 """
 
 from game import Game, default_help
-from command import Command
+from command import Command, split_command
 import time
 import random
 
 DIFFICULTIES = [
     [(2, 3), (1, 2), (0, 2), (), ()],
-    [(1, 4), (1, 3), (0, 3), (0, 1), ()],
-    [(1, 4), (1, 4), (1, 3), (0, 1), (0, 1)]
+    [(0, 4), (1, 4), (0, 3), (0, 1), ()],
+    [(0, 4), (1, 4), (1, 4), (0, 2), (0, 1)]
 ]
 
 PRIMES = [2, 3, 5, 7, 11]
@@ -47,7 +47,7 @@ class PrimeFactors(Game):
         super().__init__(_default_game)
         self.start_time = 0
         self.number = 1
-        self.exponents: list[int, ...] = [0] * len(PRIMES)
+        self.exponents: list[int, ...] = []
         self.difficulty = 0
 
     def generate_number(self):
@@ -80,7 +80,7 @@ class PrimeFactors(Game):
     def process_command(self, cmd: str) -> bool:
         if super().process_command(cmd):
             return True
-        match cmd.split(' '):
+        match split_command(cmd):
             case ('generate', *_):
                 self.generate_number()
             case ('difficulty',):
@@ -91,7 +91,7 @@ class PrimeFactors(Game):
                 except ValueError:
                     self.handle_invalid_usage('difficulty')
                 else:
-                    print(f'The current difficulty is set to {self.difficulty + 1}')
+                    print(f'The current difficulty is now set to {self.difficulty + 1}')
             case ('difficulty', *_):
                 self.handle_invalid_usage('difficulty')
             case ('c', *factors):

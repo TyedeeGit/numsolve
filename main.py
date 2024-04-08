@@ -20,10 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from math import prod, sqrt, floor
-from command import Command, unknown_command, TYPE_HELP_MSG
-from game import Game
-from all_games import ALL_GAMES
 from typing import Optional
+from all_games import ALL_GAMES
+from command import unknown_command, TYPE_HELP_MSG, split_command
+from game import Game
 
 CONTRIBUTORS = (
     'Tyedee',
@@ -71,7 +71,7 @@ class DefaultGame(Game):
         print(floor(sqrt(int(arg))))
 
     def process_command(self, cmd: str):
-        match [part for part in cmd.split(' ') if part]:
+        match split_command(cmd):
             case ():
                 pass
             case ('help',):

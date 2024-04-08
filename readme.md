@@ -23,8 +23,21 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+Numsolve is a game designed for practicing solving number theory problems quickly. It consists of several games, listed below.
 
-Numsolve is a game designed for practicing solving number theory problems quickly.
+### Prime Factors
+This game just involves the fast prime factorization of numbers. Example session shown below:
+```
+> start prime_factors
+Currently playing: prime_factors
+Figure out prime factors of a number quickly. Type "generate" to start. You will be timed.
+> difficulty 2
+The current difficulty is now set to 2
+> generate
+Your number is: 21000
+> c 2^3 3^1 7^1 5^3
+Good job! You factorized 21000 in 10.57 seconds.
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

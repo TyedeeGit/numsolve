@@ -1,5 +1,4 @@
 from typing import Type
-
 from game import Game
 from prime_factors import PrimeFactors
 

@@ -21,12 +21,14 @@ SOFTWARE.
 """
 
 from dataclasses import dataclass
-from sys import stderr
 
 TYPE_HELP_MSG = 'Type "help" for a list of commands.'
 
 def unknown_command():
     print(f'Unknown command.\n{TYPE_HELP_MSG}')
+
+def split_command(cmd: str):
+    return [part for part in cmd.split(' ') if part]
 
 HELP_FORMAT = '''{name}: {description}
     Aliases:
