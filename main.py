@@ -53,7 +53,7 @@ class DefaultGame(Game):
             case ('help', command_name):
                 found_command = False
                 for command in self.help:
-                    if command_name == command.name:
+                    if command_name == command.name or command_name in command.aliases:
                         print(command)
                         found_command = True
                         break
