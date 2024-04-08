@@ -74,6 +74,11 @@ class PrimeFactors(Game):
         match cmd.split(' '):
             case ('generate', *_):
                 self.generate_number()
+            case ('difficulty',):
+                print(f'The current difficulty is set to {self.difficulty + 1}')
+            case ('difficulty', level):
+                self.difficulty = int(level) - 1
+                print(f'The current difficulty is set to {self.difficulty + 1}')
             case _:
                 return False
         return True
