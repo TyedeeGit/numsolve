@@ -38,9 +38,13 @@ class DefaultGame(Game):
         super().__init__(self)
 
     def stop_game(self):
+        if not self.current_game:
+            print('No game to stop!')
+            return
         verify = input('Are you sure you want to stop? (yes/no) ')
         if verify.lower() == 'yes':
             self.current_game.stop_game()
+            print(f'Stopped playing "{self.current_game._name}"')
             self.current_game = None
 
     def process_command(self, cmd: str):
@@ -48,7 +52,7 @@ class DefaultGame(Game):
             case ():
                 pass
             case ('help',):
-                for command in self._help:
+                for command in self.help:
                     print(command)
             case ('help', command_name):
                 found_command = False
@@ -64,18 +68,16 @@ class DefaultGame(Game):
                 self.handle_invalid_usage('help')
             case ('exit', *_) | ('quit', *_):
                 exit()
-            case ('playing',):
+            case ('playing', *_):
                 if not self.current_game:
                     print('You are not currently playing a game.')
                 else:
                     for game in ALL_GAMES:
-                        if game == self.current_game:
+                        if game._name == self.current_game._name:
                             print(f'Currently playing: {self.current_game._name}')
                             print(self.current_game._about)
                             break
-            case ('playing', *_):
-                self.handle_invalid_usage('playing')
-            case ('games'):
+            case ('games', *_):
                 print('Available games: ')
                 for game in ALL_GAMES:
                     print(f'    {game._name}: {game._about}')
@@ -85,7 +87,16 @@ class DefaultGame(Game):
                     return True
                 for game in ALL_GAMES:
                     if game._name == game_name:
-                        self.current_game = game
+                        self.current_game = game(self)
+                        print(f'Currently playing: {self.current_game._name}')
+                        print(self.current_game._about)
+                        break
+                if not self.current_game:
+                    print(f'Unknown game "{game_name}". Type "games" for a list of games.')
+            case ('start', *_):
+                self.handle_invalid_usage('start')
+            case ('stop', *_):
+                self.stop_game()
             case _:
                 return False
         return True

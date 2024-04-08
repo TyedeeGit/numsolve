@@ -51,7 +51,7 @@ class PrimeFactors(Game):
 
     def generate_number(self):
         self.number = 1
-        self.exponents = []
+        self.exponents = [0] * len(PRIMES)
         for i, prime in enumerate(PRIMES):
             if DIFFICULTIES[self.difficulty][i]:
                 self.exponents[i] = random.randint(DIFFICULTIES[self.difficulty][i][0], DIFFICULTIES[self.difficulty][i][1])
@@ -72,7 +72,7 @@ class PrimeFactors(Game):
         if super().process_command(cmd):
             return True
         match cmd.split(' '):
-            case ('generate',):
+            case ('generate', *_):
                 self.generate_number()
             case _:
                 return False
