@@ -24,18 +24,18 @@ from abc import ABC, abstractmethod
 from command import Command, invalid_usage
 
 default_help = (
-    Command('help', ('help', 'help cmd'), description='Get information about a command, or list all commands.'),
+    Command('help', ('help', 'help <cmd>'), description='Get information about a command, or list all commands.'),
     Command('exit', ('exit',), aliases=('quit',), description='Exit the program.'),
     Command('playing', ('playing',), description='Get information about the game you are currently playing'),
     Command('games', ('games',), description='List all available games.'),
-    Command('start', ('start game_name',), description='Start a game. Use "games" to get a list of all available games.'),
+    Command('start', ('start <game_name>',), description='Start a game. Use "games" to get a list of all available games.'),
     Command('stop', ('stop',), description='Stop the current game.'),
-    Command('add', ('add arg1 arg2',), description='Add two numbers.'),
-    Command('sub', ('sub arg1 arg2',), description='Subtract two numbers.'),
-    Command('mul', ('mul arg1 arg2',), description='Multiply two numbers.'),
-    Command('div', ('div arg1 arg2',), description='Floor divides two numbers.'),
-    Command('mod', ('mod arg1 arg2',), description='Modulo operation.'),
-    Command('isqrt', ('isqrt arg',), description='Floored square root.'),
+    Command('add', ('add <arg1> <arg2>',), description='Add two numbers.'),
+    Command('sub', ('sub <arg1> <arg2>',), description='Subtract two numbers.'),
+    Command('mul', ('mul <arg1> <arg2>',), description='Multiply two numbers.'),
+    Command('div', ('div <arg1> <arg2>',), description='Floor divides two numbers.'),
+    Command('mod', ('mod <arg1> <arg2>',), description='Modulo operation.'),
+    Command('isqrt', ('isqrt <arg>',), description='Floored square root.'),
 )
 
 

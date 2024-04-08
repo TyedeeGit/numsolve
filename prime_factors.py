@@ -22,31 +22,56 @@ SOFTWARE.
 
 from game import Game, default_help
 from command import Command
+import time
+import random
 
+DIFFICULTIES = [
+    [(2, 3), (1, 2), (0, 2), (), ()],
+    [(1, 4), (1, 3), (0, 3), (0, 1), ()],
+    [(1, 4), (1, 4), (1, 3), (0, 1), (0, 1)]
+]
+
+PRIMES = [2, 3, 5, 7, 11]
 
 class PrimeFactors(Game):
-    _name = 'example'
-    _about = 'Example game to help contributors make their own.'
+    _name = 'prime_factors'
+    _about = 'Figure out prime factors of a number quickly. Type "generate" to start. You will be timed.'
     _help = default_help + (
-        Command('example', ('example arg1 arg2',), aliases=('alias1', 'alias2'), description='Example command.'),
+        Command('generate', ('generate',), description='Generates a number to factorize. Time will start immediately after using this command.'),
+        Command('difficulty', ('difficulty', 'difficulty <level>'), description='Sets the difficulty level if provided between 1 and 3. Default is 1.'),
+        Command('check', ('check <factors>',), description='Checks if you have all of the prime factors')
     )
 
     def __init__(self, _default_game: Game):
         super().__init__(_default_game)
-        self.example_var = 2
+        self.start_time = 0
+        self.number = 1
+        self.exponents: list[int, ...] = [0] * len(PRIMES)
+        self.difficulty = 0
 
-    def generate_number(self, arg1: str, arg2: str):
-        print(f"You used 'example {arg1} {arg2}'!")
+    def generate_number(self):
+        self.number = 1
+        self.exponents = []
+        for i, prime in enumerate(PRIMES):
+            if DIFFICULTIES[self.difficulty][i]:
+                self.exponents[i] = random.randint(DIFFICULTIES[self.difficulty][i][0], DIFFICULTIES[self.difficulty][i][1])
+                self.number *= prime**self.exponents[i]
+        print(f'Your number is: {self.number}')
+        self.start_time = time.time()
+
+    def check_factors(self, *factors: str):
+        end_time = time.time()
+        expected_factors = {f'{prime}^{exponent}' for prime, exponent in zip(PRIMES, self.exponents) if exponent} | {prime for prime, exponent in zip(PRIMES, self.exponents) if exponent == 1}
+        failed = any(factor not in expected_factors for factor in factors)
+        if failed:
+            print('Invalid factors! Try again')
+        else:
+            print(f'Good job! You factorized {self.number} in {round(end_time-self.start_time, 2)} seconds.')
 
     def process_command(self, cmd: str) -> bool:
         if super().process_command(cmd):
             return True
-
         match cmd.split(' '):
-            case ('example', arg1, arg2):
-                self.generate_number(arg1, arg2)
-            case ('example', *_):
-                self.handle_invalid_usage('example')
             case _:
                 return False
         return True
