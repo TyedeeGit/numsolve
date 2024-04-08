@@ -19,7 +19,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from command import Command, invalid_usage, unknown_command, TYPE_HELP_MSG
+from math import prod, sqrt, floor
+from command import Command, unknown_command, TYPE_HELP_MSG
 from game import Game
 from all_games import ALL_GAMES
 from typing import Optional
@@ -46,6 +47,28 @@ class DefaultGame(Game):
             self.current_game.stop_game()
             print(f'Stopped playing "{self.current_game._name}"')
             self.current_game = None
+
+    def add_or_multiply(self, operation: str, *operands: str):
+        if len(operands) < 2:
+            raise ValueError('Two or more arguments required!')
+        if operation == 'add':
+            print(sum(int(operand) for operand in operands))
+        else:
+            print(prod(int(operand) for operand in operands))
+
+    def arithmetic(self, operation: str, arg1: str, arg2: str):
+        match operation:
+            case 'sub':
+                print(int(arg1) - int(arg2))
+            case 'div':
+                print(int(arg1) // int(arg2))
+            case 'mod':
+                print(int(arg1) % int(arg2))
+            case 'exp':
+                print(int(arg1) ** int(arg2))
+
+    def isqrt(self, arg: str):
+        print(floor(sqrt(int(arg))))
 
     def process_command(self, cmd: str):
         match [part for part in cmd.split(' ') if part]:
@@ -97,6 +120,37 @@ class DefaultGame(Game):
                 self.handle_invalid_usage('start')
             case ('stop', *_):
                 self.stop_game()
+            case (('add' | 'mul') as operation, *operands):
+                try:
+                    self.add_or_multiply(operation, *operands)
+                except ValueError:
+                    self.handle_invalid_usage(operation)
+            case ((
+                'sub' |
+                'div' |
+                'mod' |
+                'exp'
+                  ) as operation, arg1, arg2):
+                try:
+                    self.arithmetic(operation, arg1, arg2)
+                except ValueError:
+                    self.handle_invalid_usage(operation)
+            case ((
+                      'sub' |
+                      'div' |
+                      'mod' |
+                      'exp'
+                  ) as operation, *_):
+                self.handle_invalid_usage(operation)
+            case ('isqrt', arg):
+                try:
+                    self.isqrt(arg)
+                except ValueError:
+                    self.handle_invalid_usage('isqrt')
+            case ('isqrt', *_):
+                self.handle_invalid_usage('isqrt')
+            case ('echo', *text):
+                print(' '.join(text))
             case _:
                 return False
         return True
