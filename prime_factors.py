@@ -39,7 +39,7 @@ class PrimeFactors(Game):
     _help = default_help + (
         Command('generate', ('generate',), description='Generates a number to factorize. Time will start immediately after using this command.'),
         Command('difficulty', ('difficulty', 'difficulty <level>'), description='Sets the difficulty level if provided between 1 and 3. Default is 1.'),
-        Command('check', ('check <factors>',), description='Checks if you have all of the prime factors'),
+        Command('c', ('c <factors>',), description='checks if you have all of the prime factors'),
         Command('answer', ('answer',), description='Gives you the answer.')
     )
 
@@ -94,7 +94,7 @@ class PrimeFactors(Game):
                     print(f'The current difficulty is set to {self.difficulty + 1}')
             case ('difficulty', *_):
                 self.handle_invalid_usage('difficulty')
-            case ('check', *factors):
+            case ('c', *factors):
                 self.check_factors(*factors)
             case ('answer', *_):
                 self.give_answer()
