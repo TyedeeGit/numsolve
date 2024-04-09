@@ -1,4 +1,8 @@
 from math import comb
+from abc import ABC, abstractmethod
+import random
+from typing import Type
+
 
 def simplex(n: int, dim: int):
     return comb(n + dim - 1, dim)
@@ -6,6 +10,7 @@ def simplex(n: int, dim: int):
 
 class Polynomial:
     terms_cache = {}
+
     def __init__(self, degree: int, variables: int, coefficients: list[list[int, ...], ...]):
         """
         Initializes a Polynomial object.
@@ -41,7 +46,7 @@ class Polynomial:
             term_value = self.coefficients[i]
             for var in term:
                 if var:
-                    term_value *= values[var-1]
+                    term_value *= values[var - 1]
             output += term_value
         return output
 
@@ -65,8 +70,35 @@ class Polynomial:
             self.terms_cache[self.variables].append(new_terms)
         return self.terms_cache[self.variables][-1]
 
+
+class PolynomialFactory(ABC):
+    @abstractmethod
+    def __call__(self) -> Polynomial:
+        """
+        Generates a polynomial.
+        :return:
+        """
+
+def factory_from_dict(data: dict) -> Type[PolynomialFactory]:
+    new_data = {
+        'degree': 1,
+        'variables': 1,
+        'terms': [0, 1],
+        'ranges': [[0, 1], [0, 1]],
+        'mode': 'integer'
+    } | data.copy()
+
+    class GeneratedPolynomialFactory(PolynomialFactory):
+        _data = new_data
+
+        def __call__(self) -> Polynomial:
+
+            return
+
+
 def main():
     print(Polynomial(2, 2, [1, 2, 3, 4, 5, 6]).terms)
+
 
 if __name__ == '__main__':
     main()
