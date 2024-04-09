@@ -19,19 +19,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from typing import Sequence
 from game import Game, default_help
 from command import Command, split_command
+from math import comb
 import time
 import random
+import json
 
 
 class PolynomialSolving(Game):
     _name = 'polynomial_solving'
-    _about = 'Solve polynomials whose solutions are prime. Use "settings" to set difficulty. Type "generate" to start. You will be timed.'
+    _about = 'Solve polynomials whose solutions are integers. Use "settings" to set difficulty. Type "generate" to start. You will be timed.'
     _help = default_help + (
         Command('generate', ('generate',), aliases=('gen',),
                 description='Generates a polynomial to solve. Time will start immediately after using this command.'),
-        Command('settings', ('settings <get|set|help> <setting> <value?>',), aliases=('s', 'difficulty', 'diff'),
+        Command('settings', ('settings <get|set|help> <setting?>',), aliases=('s', 'difficulty', 'diff'),
                 description='Set the difficulty.'),
         Command('check', ('check <args>',), aliases=('c',),
                 description='Check your solutions.'),
@@ -41,6 +44,9 @@ class PolynomialSolving(Game):
 
     def __init__(self, _default_game: Game):
         super().__init__(_default_game)
+        with open('polynomial_solving.json') as file:
+            self.settings = json.load(file)
+        self.current_setting = 'default'
 
     def process_command(self, cmd: str) -> bool:
         if super().process_command(cmd):
@@ -50,15 +56,13 @@ class PolynomialSolving(Game):
                 pass
             case (
                 ('settings' | 's' | 'difficulty' | 'diff'),
-                'get',
-                setting
+                'get'
             ):
                 pass
             case (
                 ('settings' | 's' | 'difficulty' | 'diff'),
                 'set',
-                setting,
-                value
+                setting
             ):
                 pass
             case (
