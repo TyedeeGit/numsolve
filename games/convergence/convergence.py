@@ -21,11 +21,26 @@ SOFTWARE.
 """
 
 from gamelib.game import Game, default_help
-from gamelib.command import Command
+from gamelib.command import Command, split_command
 
 
 class Convergence(Game):
     _id = 'convergence'
     _name = 'Convergence'
     _about = 'Practice convergence tests on infinite series.'
-    _help = default_help + ()
+    _help = default_help + (
+        Command(f'generate '),
+        Command('formula', description='pass'),
+    )
+    def process_command(self, cmd: str) -> bool:
+        if super().process_command(cmd):
+            return True
+
+        match split_command(cmd):
+            case ('example', arg1, arg2):
+                self.command(arg1, arg2)
+            case ('example', *_):
+                self.handle_invalid_usage('example')
+            case _:
+                return False
+        return True
