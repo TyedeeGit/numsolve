@@ -19,7 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from command import Command, invalid_usage
+from .command import Command, invalid_usage
 
 default_help = (
     Command('help', ('help', 'help <cmd>'), description='Get information about a command, or list all valid commands. Extra game specific commands may appear.'),

@@ -19,12 +19,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Sequence
-from game import Game, default_help
-from command import Command, split_command
-from math import comb
-import time
-import random
+from gamelib.game import Game, default_help
+from gamelib.command import Command, split_command
 import json
 
 

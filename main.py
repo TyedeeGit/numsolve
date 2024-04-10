@@ -21,9 +21,9 @@ SOFTWARE.
 """
 from math import prod, sqrt, floor
 from typing import Optional
-from all_games import ALL_GAMES
-from command import unknown_command, TYPE_HELP_MSG, split_command
-from game import Game
+from games.all_games import ALL_GAMES
+from gamelib.command import unknown_command, TYPE_HELP_MSG, split_command
+from gamelib.game import Game
 
 CONTRIBUTORS = (
     'Tyedee',

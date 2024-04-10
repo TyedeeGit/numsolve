@@ -20,8 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from game import Game, default_help
-from command import Command, split_command
+from gamelib.game import Game, default_help
+from gamelib.command import Command, split_command
 
 class ExampleGame(Game):
     _id = 'example'
