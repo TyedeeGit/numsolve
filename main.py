@@ -40,12 +40,12 @@ class DefaultGame(Game):
 
     def stop_game(self):
         if not self.current_game:
-            print('No game to stop!')
+            print('No game to stop! Did you mean "quit"?')
             return
-        verify = input('Are you sure you want to stop? (yes/no) ')
+        verify = input(f'Are you sure you want to stop playing: {self.current_game._name} [{self.current_game._id}]? (yes/no) ')
         if verify.lower() == 'yes':
             self.current_game.stop_game()
-            print(f'Stopped playing "{self.current_game._name}"')
+            print(f'Stopped the current game')
             self.current_game = None
 
     def add_or_multiply(self, operation: str, *operands: str):
@@ -93,30 +93,30 @@ class DefaultGame(Game):
                 exit()
             case ('playing', *_):
                 if not self.current_game:
-                    print('You are not currently playing a game.')
+                    print('You are not currently playing a game. Type "games" for a list of games.')
                 else:
                     for game in ALL_GAMES:
-                        if game._name == self.current_game._name:
-                            print(f'Currently playing: {self.current_game._name}')
+                        if game._id == self.current_game._id:
+                            print(f'Currently playing: {self.current_game._name} [{self.current_game._id}]')
                             print(self.current_game._about)
                             break
             case ('games', *_):
                 print('Available games: ')
                 for game in ALL_GAMES:
-                    print(f'    {game._name}: {game._about}')
-            case ('start', game_name):
+                    print(f'    {game._name}:\n        About: {game._about}\n        ID: {game._id}')
+            case ('start' | 'play', game_id):
                 if self.current_game:
                     print('Stop the current game before starting a new one.')
                     return True
                 for game in ALL_GAMES:
-                    if game._name == game_name:
+                    if game._id == game_id:
                         self.current_game = game(self)
-                        print(f'Currently playing: {self.current_game._name}')
+                        print(f'Currently playing: {self.current_game._name} [{self.current_game._id}]')
                         print(self.current_game._about)
                         break
                 if not self.current_game:
-                    print(f'Unknown game "{game_name}". Type "games" for a list of games.')
-            case ('start', *_):
+                    print(f'Unknown game id "{game_id}". Type "games" for a list of games and their ids.')
+            case ('start' | 'play', *_):
                 self.handle_invalid_usage('start')
             case ('stop', *_):
                 self.stop_game()
@@ -160,11 +160,12 @@ class DefaultGame(Game):
         print(f'MIT License (c) 2024 {", ".join(CONTRIBUTORS)}')
         print(TYPE_HELP_MSG)
         while True:
-            cmd = input('> ')
             recognized = False
             if not self.current_game:
+                cmd = input('> ')
                 recognized = self.process_command(cmd)
             else:
+                cmd = input('>> ')
                 recognized = self.current_game.process_command(cmd)
             if not recognized:
                 unknown_command()

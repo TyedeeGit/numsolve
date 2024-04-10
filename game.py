@@ -22,25 +22,26 @@ SOFTWARE.
 from command import Command, invalid_usage
 
 default_help = (
-    Command('help', ('help', 'help <cmd>'), description='Get information about a command, or list all commands.'),
+    Command('help', ('help', 'help <cmd>'), description='Get information about a command, or list all valid commands. Extra game specific commands may appear.'),
     Command('exit', ('exit',), aliases=('quit',), description='Exit the program.'),
     Command('playing', ('playing',), description='Get information about the game you are currently playing'),
     Command('games', ('games',), description='List all available games.'),
-    Command('start', ('start <game_name>',), description='Start a game. Use "games" to get a list of all available games.'),
+    Command('start', ('start <game_id>',), aliases=('play',), description='Start a game by its id(not name!). Use "games" to get a list of all available games and their ids.'),
     Command('stop', ('stop',), description='Stop the current game.'),
-    Command('add', ('add <args>',), description='Add two or more numbers.'),
-    Command('sub', ('sub <arg1> <arg2>',), description='Subtract two numbers.'),
-    Command('mul', ('mul <args>',), description='Multiply two or more numbers.'),
-    Command('div', ('div <arg1> <arg2>',), description='Floor divides two numbers.'),
-    Command('mod', ('mod <arg1> <arg2>',), description='Modulo operation.'),
-    Command('exp', ('exp <arg1> <arg2>',), description='Raise one number to the power of another.'),
-    Command('isqrt', ('isqrt <arg>',), description='Floored square root.'),
-    Command('echo', ('echo <text>',), description='Echos it\'s arguments.')
+    Command('add', ('add <args>',), description='Add two or more integers.'),
+    Command('sub', ('sub <arg1> <arg2>',), description='Subtract two integers.'),
+    Command('mul', ('mul <args>',), description='Multiply two or more integers.'),
+    Command('div', ('div <arg1> <arg2>',), description='Floor divide two integers.'),
+    Command('mod', ('mod <arg1> <arg2>',), description='Modulo two integers. Second argument is the modulus.'),
+    Command('exp', ('exp <arg1> <arg2>',), description='Raise one integer to the power of another.'),
+    Command('isqrt', ('isqrt <arg>',), description='Floored square root of integers.'),
+    Command('echo', ('echo <text>',), description='Echos text.')
 )
 
 
 class Game:
-    _name: str = 'game'
+    _id: str = 'game'
+    _name: str = 'Base Game'
     _about: str = 'Replace with a description of your game.'
     _help: tuple[Command] = default_help
 
@@ -48,7 +49,7 @@ class Game:
         self._default_game = _default_game
 
     def __eq__(self, other: 'Game'):
-        return self._name == other._name and self._about == other._about
+        return self._id == other._id and self._about == other._about
 
     def stop_game(self):
         pass

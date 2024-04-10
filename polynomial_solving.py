@@ -29,8 +29,9 @@ import json
 
 
 class PolynomialSolving(Game):
-    _name = 'polynomial_solving'
-    _about = 'Solve polynomials whose solutions are integers. Use "settings" to set difficulty. Type "generate" to start. You will be timed.'
+    _id = 'polynomial_solving'
+    _name = 'Polynomial Solving'
+    _about = 'Solve polynomials whose solutions are integers. Use "settings" or "s" to set difficulty. Type "generate" or "gen" to start. You will be timed.'
     _help = default_help + (
         Command('generate', ('generate',), aliases=('gen',),
                 description='Generates a polynomial to solve. Time will start immediately after using this command.'),

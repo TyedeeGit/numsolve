@@ -34,8 +34,9 @@ DIFFICULTIES = [
 PRIMES = [2, 3, 5, 7, 11]
 
 class PrimeFactors(Game):
-    _name = 'prime_factors'
-    _about = 'Figure out prime factors of a number quickly. Type "generate" to start. You will be timed.'
+    _id = 'prime_factors'
+    _name = 'Prime Factors'
+    _about = 'Figure out prime factors of a number quickly. Type "generate" or "gen" to start. You will be timed.'
     _help = default_help + (
         Command('generate', ('generate',), aliases=('gen',),
                 description='Generates a number to factorize. Time will start immediately after using this command.'),
@@ -92,8 +93,11 @@ class PrimeFactors(Game):
             case ('difficulty' | 'diff', level):
                 try:
                     self.difficulty = int(level) - 1
+                    assert self.difficulty in range(0, 3)
                 except ValueError:
                     self.handle_invalid_usage('difficulty')
+                except AssertionError:
+                    print('Please enter an integer between 1 and 3.')
                 else:
                     print(f'The current difficulty is now set to {self.difficulty + 1}')
             case ('difficulty' | 'diff', *_):

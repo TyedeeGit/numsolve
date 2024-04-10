@@ -24,7 +24,7 @@ from game import Game, default_help
 from command import Command, split_command
 
 class ExampleGame(Game):
-    _name = 'example'
+    _id = 'example'
     _about = 'Example game to help contributors make their own.'
     _help = default_help + (
         Command('example', ('example <arg1> <arg2>',), aliases=('alias1', 'alias2'), description='Example command.'),
