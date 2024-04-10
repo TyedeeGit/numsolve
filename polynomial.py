@@ -1,7 +1,6 @@
 from math import comb
-from abc import ABC, abstractmethod
 import random
-from typing import Type
+from typing import Type, Callable
 
 
 def simplex(n: int, dim: int):
@@ -70,34 +69,41 @@ class Polynomial:
             self.terms_cache[self.variables].append(new_terms)
         return self.terms_cache[self.variables][-1]
 
+class PolynomialFactory:
+    def __init__(self, data: dict):
+        self._data = {
+            'degree': 1,
+            'variables': 1,
+            'terms': [0, 1],
+            'ranges': [[0, 1], [0, 1]],
+            'mode': 'integer'
+        } | data
+        self._call = self._call_table[self._data['mode']]
 
-class PolynomialFactory(ABC):
-    @abstractmethod
+    def integer_mode_call(self) -> Polynomial:
+        pass
+
+    def prime_mode_call(self) -> Polynomial:
+        pass
+
     def __call__(self) -> Polynomial:
         """
         Generates a polynomial.
         :return:
         """
+        return self._call()
 
-def factory_from_dict(data: dict) -> Type[PolynomialFactory]:
-    new_data = {
-        'degree': 1,
-        'variables': 1,
-        'terms': [0, 1],
-        'ranges': [[0, 1], [0, 1]],
-        'mode': 'integer'
-    } | data.copy()
-
-    class GeneratedPolynomialFactory(PolynomialFactory):
-        _data = new_data
-
-        def __call__(self) -> Polynomial:
-
-            return
+    _call_table: dict[str, Callable[[], Polynomial]] = {
+        'integer': integer_mode_call,
+        'prime': prime_mode_call,
+    }
 
 
 def main():
-    print(Polynomial(2, 2, [1, 2, 3, 4, 5, 6]).terms)
+    poly = Polynomial(2, 2, [1, 2, 3, 4, 5, 6])
+    print(poly)
+    print(poly.terms)
+    print(poly.evaluate(5, 3))
 
 
 if __name__ == '__main__':
