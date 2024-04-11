@@ -32,8 +32,6 @@ CONTRIBUTORS = (
 )
 
 
-
-
 class DefaultGame(Game):
     def __init__(self):
         self.current_game: Optional[Game] = None
@@ -43,7 +41,8 @@ class DefaultGame(Game):
         if not self.current_game:
             print('No game to stop! Did you mean "quit"?')
             return
-        verify = input(f'Are you sure you want to stop playing: {self.current_game._name} [{self.current_game._id}]? (yes/no) ')
+        verify = input(
+            f'Are you sure you want to stop playing: {self.current_game._name} [{self.current_game._id}]? (yes/no) ')
         if verify.lower() == 'yes':
             self.current_game.stop_game()
             print(f'Stopped the current game')
@@ -76,7 +75,7 @@ class DefaultGame(Game):
         match split_command(cmd):
             case ():
                 pass
-            case ('help',):
+            case ('help', ):
                 for command in self.help:
                     print(command)
             case ('help', command_name):
@@ -128,22 +127,22 @@ class DefaultGame(Game):
                 except ValueError:
                     self.handle_invalid_usage(operation)
             case ((
-                'sub' |
-                'div' |
-                'mod' |
-                'exp' |
-                'pow'
+                  'sub' |
+                  'div' |
+                  'mod' |
+                  'exp' |
+                  'pow'
                   ) as operation, arg1, arg2):
                 try:
                     self.arithmetic(operation, arg1, arg2)
                 except ValueError:
                     self.handle_invalid_usage(operation)
             case ((
-                      'sub' |
-                      'div' |
-                      'mod' |
-                      'exp' |
-                      'pow'
+                  'sub' |
+                  'div' |
+                  'mod' |
+                  'exp' |
+                  'pow'
                   ) as operation, *_):
                 self.handle_invalid_usage(operation)
             case ('sqrt', arg):
