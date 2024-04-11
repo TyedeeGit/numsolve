@@ -77,8 +77,10 @@ class Polynomial[CT, VT, RT]:
 
 
 class PolynomialFactory[CT, VT, RT](ABC):
-    factory_id = ''
-    factory_about = ''
+    id = ''
+    name = ''
+    about = ''
+
     def __init__(self):
         self.settings: dict = {}
 

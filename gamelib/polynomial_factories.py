@@ -5,9 +5,10 @@ from random import randint
 
 
 class DefaultPolynomialFactory[CT: int, VT: int, RT: int](PolynomialFactory):
-    factory_id = 'default'
-    factory_name = 'Simon\'s Favorite Polynomials'
-    factory_about = 'Generates a polynomial A*p*q + B*p + C*q - D, where p and q are primes.'
+    id = 'default'
+    name = 'Simon\'s Favorite Polynomials'
+    about = 'Generates a polynomial A*p*q + B*p + C*q - D = 0, where p and q are primes.'
+
     def __call__(self, difficulty: int) -> tuple[Polynomial[CT, VT, RT], tuple[VT, ...], str]:
         primes = [prime for prime in get_primes_in_range(2, self.settings[difficulty]['prime_range'][1]+1)]
 
@@ -28,5 +29,5 @@ ALL_POLYNOMIAL_FACTORIES: tuple[Type[PolynomialFactory], ...] = (
 
 def find_factory(_id: str) -> Optional[Type[PolynomialFactory]]:
     for factory in ALL_POLYNOMIAL_FACTORIES:
-        if factory.factory_id == _id:
+        if factory.id == _id:
             return factory

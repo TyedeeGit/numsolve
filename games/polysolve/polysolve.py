@@ -25,13 +25,14 @@ from typing import Optional
 from gamelib.command import Command, split_command
 from gamelib.game import Game, default_help
 from gamelib.polynomial import Polynomial, PolynomialFactory
-from gamelib.polynomial_factories import find_factory
+from gamelib.polynomial_factories import find_factory, ALL_POLYNOMIAL_FACTORIES
 
+SETTINGS_FILE = 'settings/polysolve.json'
 
-class PolynomialSolving(Game):
-    _id = 'polynomial_solving'
+class Polysolve(Game):
+    _id = 'polysolve'
     _name = 'Polynomial Solving'
-    _about = 'Solve polynomials whose solutions are integers. Use "settings" or "s" to set difficulty. Type "generate" or "gen" to start. You will be timed.'
+    _about = 'Solve polynomials whose solutions are integers. Use "mode" or "m" to set mode and "difficulty" or "diff" to set difficulty. Type "generate" or "gen" to start. You will be timed.'
     _help = default_help + (
         Command('generate', ('generate',), aliases=('gen',),
                 description='Generates a polynomial to solve. Time will start immediately after using this command.'),
@@ -57,11 +58,15 @@ class PolynomialSolving(Game):
 
     def update_settings(self):
         if self.current_factory:
-            with open('games/polynomial_solving/polynomial_solving.json') as file:
+            with open(SETTINGS_FILE) as file:
                 self.current_factory.settings = json.load(file)[self.current_mode]
+        else:
+            raise ValueError('No factory to update!')
 
     def update_factory(self):
         self.current_factory = find_factory(self.current_mode)()
+        if not self.current_factory:
+            raise ValueError('Could not find factory!')
         self.update_settings()
 
     def check_answer(self, *answers: str):
@@ -82,11 +87,39 @@ class PolynomialSolving(Game):
                 print(f'Problem: {problem}')
                 self.start_time = time()
             case (('mode' | 'm'), 'get'):
-                print()
-            case (('mode' | 'm'), 'get' | 'set' | 'help', *_):
+                print(f'Current mode is set to: {self.current_factory.name} [{self.current_factory.id}]')
+                print(self.current_factory.about)
+            case (('mode' | 'm'), 'set', mode):
+                self.current_mode = mode
+                try:
+                    self.update_factory()
+                except ValueError:
+                    print('Nonexistent mode. Type "mode help" to get a list of all modes.')
+                except KeyError:
+                    print('Mode not found in settings file.')
+                else:
+                    print(f'Current mode is now set to: {self.current_factory.name} [{self.current_factory.id}]')
+            case (('mode' | 'm'), 'help'):
+                with open(SETTINGS_FILE) as file:
+                    all_settings: dict = json.load(file)
+                    for factory in ALL_POLYNOMIAL_FACTORIES:
+                        settings = all_settings.get(factory.id, None)
+                        if settings is not None:
+                            print(f'    {factory.name}:\n        About: {factory.about}\n        ID: {factory.id}')
+            case (('mode' | 'm'), 'help', mode):
+                if factory := find_factory(mode):
+                    with open(SETTINGS_FILE) as file:
+                        settings = json.load(file).get(factory.id, None)
+                        if settings is not None:
+                            print(f'    {factory.name}:\n        About: {factory.about}\n        ID: {factory.id}')
+                        else:
+                            print(f'Settings not found for mode "{mode}"!')
+                else:
+                    print(f'Factory not found for mode "{mode}"!')
+            case (('mode' | 'm'), *_):
                 self.handle_invalid_usage('mode')
             case (('difficulty' | 'diff'), *_):
-                self.handle_invalid_usage('settings')
+                self.handle_invalid_usage('difficulty')
             case ('check' | 'c', *args):
                 self.check_answer(*args)
             case ('answer' | 'ans', *_):
