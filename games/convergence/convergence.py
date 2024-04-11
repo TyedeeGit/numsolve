@@ -22,6 +22,9 @@ SOFTWARE.
 
 from gamelib.game import Game, default_help
 from gamelib.command import Command, split_command
+from gamelib.rational import Rational, parse
+from gamelib.series import GeometricSeries
+from random import randint
 
 
 class Convergence(Game):
@@ -29,18 +32,36 @@ class Convergence(Game):
     _name = 'Convergence'
     _about = 'Practice convergence tests on infinite series.'
     _help = default_help + (
-        Command(f'generate '),
-        Command('formula', description='pass'),
+        Command('formula', ('formula',),
+                description='Generates the formula for finding the sum of an infinite series.'),
+        Command('generate', ('generate', 'generate <starting_value> <ratio>',), aliases=('gen',),
+                description='Generates an infinite series.')
     )
+
+    def __init__(self, _default_game: Game):
+        super().__init__(_default_game)
+        self.current_series = None
+
+    def generate(self, starting_value: str, ratio: str):
+        self.current_series = GeometricSeries(parse(starting_value), parse(ratio))
+
+    def generate_random(self):
+        self.current_series = GeometricSeries(Rational(randint(1, 10), randint(1, 10)),
+                                              Rational(randint(1, 10), randint(1, 10)))
+
+    def get_formula(self):
+        if self.current_series is None:
+            print('No series to generate formula for. Type "generate" or "gen" to generate a series.')
+            return
+        print(f'{self.current_series.starting_value} / (1 - {self.current_series.ratio})')
+
     def process_command(self, cmd: str) -> bool:
         if super().process_command(cmd):
             return True
 
         match split_command(cmd):
-            case ('example', arg1, arg2):
-                self.command(arg1, arg2)
-            case ('example', *_):
-                self.handle_invalid_usage('example')
+            case ('formula', *_):
+                self.get_formula()
             case _:
                 return False
         return True
