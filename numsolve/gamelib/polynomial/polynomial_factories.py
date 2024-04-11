@@ -1,7 +1,7 @@
 from typing import Type, Optional
 from .polynomial import PolynomialFactory, Polynomial
-from gamelib.rational import Rational, parse
-from gamelib.primes import get_primes_in_range
+from numsolve.gamelib.rational import Rational
+from numsolve.gamelib.primes import get_primes_in_range
 from random import randint
 
 

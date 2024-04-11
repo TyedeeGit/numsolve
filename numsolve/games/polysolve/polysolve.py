@@ -22,9 +22,9 @@ SOFTWARE.
 import json
 from time import time
 from typing import Optional
-from gamelib.command import Command, split_command
-from gamelib.game import Game, default_help
-from gamelib.polynomial import Polynomial, PolynomialFactory, find_factory, ALL_POLYNOMIAL_FACTORIES
+from numsolve.gamelib.command import Command, split_command
+from numsolve.gamelib.game import Game, default_help
+from numsolve.gamelib.polynomial import Polynomial, PolynomialFactory, find_factory, ALL_POLYNOMIAL_FACTORIES
 
 SETTINGS_FILE = 'settings/polysolve.json'
 

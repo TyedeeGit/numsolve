@@ -20,10 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from gamelib.game import Game, default_help
-from gamelib.command import Command, split_command
-from gamelib.rational import Rational, parse
-from gamelib.series import GeometricSeries
+from numsolve.gamelib.game import Game, default_help
+from numsolve.gamelib.command import Command, split_command
+from numsolve.gamelib.rational import Rational, parse
+from numsolve.gamelib.series import GeometricSeries
 from random import randint
 
 
