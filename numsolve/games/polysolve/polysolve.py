@@ -26,7 +26,7 @@ from numsolve.gamelib.command import Command, split_command
 from numsolve.gamelib.game import Game, default_help
 from numsolve.gamelib.polynomial import Polynomial, PolynomialFactory, find_factory, ALL_POLYNOMIAL_FACTORIES
 
-SETTINGS_FILE = 'settings/polysolve.json'
+SETTINGS_FILE = 'numsolve/settings/polysolve.json'
 
 class Polysolve(Game):
     _id = 'polysolve'
@@ -53,6 +53,7 @@ class Polysolve(Game):
         self.current_factory: Optional[PolynomialFactory] = None
         self.start_time = 0
         self.solutions: tuple[str, ...] = ()
+        self.solution_string: str = ''
         self.update_factory()
 
     def update_settings(self):
@@ -86,7 +87,7 @@ class Polysolve(Game):
             return True
         match split_command(cmd):
             case ('generate' | 'gen', *_):
-                self.current_polynomial, self.solutions, problem = self.current_factory(self.current_difficulty)
+                self.current_polynomial, self.solutions, problem, self.solution_string = self.current_factory(self.current_difficulty)
                 print(f'Problem: {problem}')
                 self.start_time = time()
             case (('mode' | 'm'), 'get'):
@@ -124,14 +125,19 @@ class Polysolve(Game):
             case (('difficulty' | 'diff'), *_):
                 self.handle_invalid_usage('difficulty')
             case ('check' | 'c', *args):
-                self.check_answer(*args)
+                if self.current_polynomial:
+                    self.check_answer(*args)
+                else:
+                    print('No problem to check answers for!')
             case ('answer' | 'ans', *_):
-                end_time = time()
-                print('Solution:')
-                for symbol, solution in zip(self.current_polynomial.variable_symbols, self.solutions):
-                    print(f'{symbol} = {solution}')
-                print(f'You gave up in {end_time - self.start_time:.2f} seconds!')
-                self.current_polynomial = None
+                if self.current_polynomial:
+                    end_time = time()
+                    print('Solution:')
+                    print(self.solution_string)
+                    print(f'You gave up in {end_time - self.start_time:.2f} seconds!')
+                    self.current_polynomial = None
+                else:
+                    print('No problem to give up on!')
             case _:
                 return False
         return True

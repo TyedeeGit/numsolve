@@ -10,7 +10,7 @@ class DefaultPolynomialFactory[CT: int, VT: int, RT: int](PolynomialFactory):
     name = 'Simon\'s Favorite Polynomials'
     about = 'Generates a polynomial Apq + Bp + Cq - D = 0, where p and q are primes.'
 
-    def __call__(self, difficulty: int) -> tuple[Polynomial[CT, VT, RT], tuple[VT, ...], str]:
+    def __call__(self, difficulty: int) -> tuple[Polynomial[CT, VT, RT], tuple[VT, ...], str, str]:
         primes = [prime for prime in get_primes_in_range(2, self.settings[difficulty]['prime_range'][1]+1)]
 
         p, q = (primes[randint(primes.index(self.settings[difficulty]['prime_range'][0]), len(primes)-1)],
@@ -22,7 +22,7 @@ class DefaultPolynomialFactory[CT: int, VT: int, RT: int](PolynomialFactory):
 
         d = a*p*q + b*p + c*q
         polynomial = Polynomial(2, 2, [0, a, 0, b, c, -d], variable_symbols=['q', 'p'])
-        return polynomial, (str(q), str(p)), f'{polynomial} = 0, where q and p are primes. Solutions must be given in reverse order.'
+        return polynomial, (str(q), str(p)), f'{polynomial} = 0, where q and p are primes. Solutions must be given in reverse order.', f'q = {q}\np = {p}'
 
     def check(self, polynomial: Polynomial[CT, VT, RT], solutions: tuple[VT, ...], answers: tuple[str, ...]) -> bool:
         parsed_answers: list[Rational, ...] = [int(answer) for answer in answers]
