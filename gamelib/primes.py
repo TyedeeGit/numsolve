@@ -40,3 +40,11 @@ def get_primes_in_range(start: int, stop: int):
             break
         if prime >= start:
             yield prime
+
+def main():
+    primes = get_primes_in_range(2, 24)
+    for prime in primes:
+        print(prime)
+
+if __name__ == '__main__':
+    main()

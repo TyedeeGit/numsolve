@@ -1,15 +1,10 @@
 {
   "default": {
-    "description": "Generates a polynomial Apq + Bp + Cq - D = 0, where p, q are primes.",
-    "difficulties": [
-      {
-        "degree": 2,
-        "variables": 2,
-        "terms": [1, 3, 4],
-        "ranges": [[], [1, 5], [], [1, 7], [1, 7], []],
-        "mode": "prime",
-        "max_prime": 23
-      }
-    ]
+    "1": {
+      "prime_range": [2, 23],
+      "a_range": [2, 7],
+      "b_range": [2, 5],
+      "c_range": [2, 5]
+    }
   }
 }

@@ -1,16 +1,19 @@
+from abc import ABC, abstractmethod
 from math import comb
-import random
-from typing import Type, Callable
+from typing import Sequence, Optional
 
 
 def simplex(n: int, dim: int):
     return comb(n + dim - 1, dim)
 
+def default_vars(length: int):
+    return [f'x{i+1}' for i in range(length)]
 
-class Polynomial:
+
+class Polynomial[CT, VT, RT]:
     terms_cache = {}
 
-    def __init__(self, degree: int, variables: int, coefficients: list[list[int, ...], ...]):
+    def __init__(self, degree: int, variables: int, coefficients: Sequence[CT], variable_symbols: Optional[Sequence[str]] = None):
         """
         Initializes a Polynomial object.
         """
@@ -19,20 +22,23 @@ class Polynomial:
         if len(coefficients) != len(self.terms):
             raise ValueError(f'Expected {len(self.terms)} coefficients(s), got {len(coefficients)}.')
         self.coefficients = coefficients
+        self.variable_symbols = default_vars(variables) if variable_symbols is None else variable_symbols
 
     def __str__(self):
         output = ''
+        not_first_coefficient = False
         for i, (term, coefficient) in enumerate(zip(self.terms, self.coefficients)):
             if coefficient:
-                if i:
+                if i and not_first_coefficient:
                     output += ' + ' if coefficient > 0 else ' - '
                 output += str(abs(coefficient))
-                for var in term:
+                for var, symbol in zip(term, self.variable_symbols):
                     if var:
-                        output += f'*x{var}'
+                        output += self.variable_symbols[var-1]
+                not_first_coefficient = True
         return output
 
-    def evaluate(self, *values: int) -> int:
+    def evaluate(self, *values: VT) -> RT:
         """
         Evaluates the polynomial at the given values.
         :param values:
@@ -69,35 +75,21 @@ class Polynomial:
             self.terms_cache[self.variables].append(new_terms)
         return self.terms_cache[self.variables][-1]
 
-class PolynomialFactory:
-    def __init__(self, data: dict):
-        self._data = {
-            'degree': 1,
-            'variables': 1,
-            'terms': [0, 1],
-            'ranges': [[0, 1], [0, 1]],
-            'mode': 'integer'
-        } | data
-        self._call = self._call_table[self._data['mode']]
 
-    def integer_mode_call(self) -> Polynomial:
-        pass
+class PolynomialFactory[CT, VT, RT](ABC):
+    factory_id = ''
+    factory_about = ''
+    def __init__(self):
+        self.settings: dict = {}
 
-    def prime_mode_call(self) -> Polynomial:
-        pass
-
-    def __call__(self) -> Polynomial:
+    @abstractmethod
+    def __call__(self, difficulty: int) -> tuple[Polynomial[CT, VT, RT], tuple[tuple[VT, int], ...], str]:
         """
-        Generates a polynomial.
+        Generates a polynomial and a list of zeros.
+        :param: difficulty
         :return:
         """
-        return self._call()
-
-    _call_table: dict[str, Callable[[], Polynomial]] = {
-        'integer': integer_mode_call,
-        'prime': prime_mode_call,
-    }
-
+        pass
 
 def main():
     poly = Polynomial(2, 2, [1, 2, 3, 4, 5, 6])

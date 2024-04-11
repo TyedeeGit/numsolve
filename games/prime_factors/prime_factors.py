@@ -79,7 +79,7 @@ class PrimeFactors(Game):
         end_time = time.time()
         if self.number != 1:
             print(f'The prime factorization of {self.number} = {" * ".join(f"{prime}^{exponent}" for prime, exponent in zip(PRIMES, self.exponents) if exponent)}')
-            print(f'You gave up within {round(end_time-self.start_time, 2)} seconds.')
+            print(f'You gave up within {end_time-self.start_time:.2f} seconds.')
         self.number = 1
 
     def process_command(self, cmd: str) -> bool:
