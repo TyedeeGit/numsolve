@@ -160,7 +160,7 @@ class DefaultGame(Game):
         return True
 
     def run(self):
-        print('numsolve')
+        print('Numsolve')
         print(f'MIT License (c) 2024 {", ".join(CONTRIBUTORS)}')
         print(TYPE_HELP_MSG)
         while True:

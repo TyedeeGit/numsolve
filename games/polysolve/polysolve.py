@@ -64,9 +64,10 @@ class Polysolve(Game):
             raise ValueError('No factory to update!')
 
     def update_factory(self):
-        self.current_factory = find_factory(self.current_mode)()
-        if not self.current_factory:
+        factory_type = find_factory(self.current_mode)
+        if not factory_type:
             raise ValueError('Could not find factory!')
+        self.current_factory = factory_type()
         self.update_settings()
 
     def check_answer(self, *answers: str):
