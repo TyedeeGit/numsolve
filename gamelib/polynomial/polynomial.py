@@ -85,12 +85,16 @@ class PolynomialFactory[CT, VT, RT](ABC):
         self.settings: dict = {}
 
     @abstractmethod
-    def __call__(self, difficulty: int) -> tuple[Polynomial[CT, VT, RT], tuple[tuple[VT, int], ...], str]:
+    def __call__(self, difficulty: int) -> tuple[Polynomial[CT, VT, RT], tuple[VT, ...], str]:
         """
         Generates a polynomial and a list of zeros.
         :param: difficulty
         :return:
         """
+        pass
+
+    @abstractmethod
+    def check(self, polynomial: Polynomial[CT, VT, RT], solutions: tuple[VT, ...], answers: tuple[str, ...]) -> bool:
         pass
 
 def main():

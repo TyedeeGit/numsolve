@@ -71,12 +71,15 @@ class Polysolve(Game):
 
     def check_answer(self, *answers: str):
         end_time = time()
-        if answers == self.solutions:
-            print(f'You solved the polynomial in {end_time - self.start_time:.2f} seconds!')
-            self.update_factory()
-            self.current_polynomial = None
-        else:
-            print('Incorrect answer. Try again.')
+        try:
+            if self.current_factory.check(self.current_polynomial, self.solutions, answers):
+                print(f'You solved the problem in {end_time - self.start_time:.2f} seconds!')
+                self.update_factory()
+                self.current_polynomial = None
+            else:
+                print('Incorrect answer. Try again.')
+        except ValueError:
+            print('Invalid answer. Try again.')
 
     def process_command(self, cmd: str) -> bool:
         if super().process_command(cmd):
