@@ -24,6 +24,7 @@ from typing import Optional
 from games.all_games import ALL_GAMES
 from gamelib.command import unknown_command, TYPE_HELP_MSG, split_command
 from gamelib.game import Game
+from gamelib.rational import Rational, parse
 
 CONTRIBUTORS = (
     'Tyedee',
@@ -52,23 +53,24 @@ class DefaultGame(Game):
         if len(operands) < 2:
             raise ValueError('Two or more arguments required!')
         if operation == 'add':
-            print(sum(int(operand) for operand in operands))
+            print(sum(parse(operand) for operand in operands))
         else:
-            print(prod(int(operand) for operand in operands))
+            print(prod(parse(operand) for operand in operands))
 
     def arithmetic(self, operation: str, arg1: str, arg2: str):
         match operation:
             case 'sub':
-                print(int(arg1) - int(arg2))
+                print(parse(arg1) - parse(arg2))
             case 'div':
-                print(int(arg1) // int(arg2))
+                print(parse(arg1) / parse(arg2))
             case 'mod':
                 print(int(arg1) % int(arg2))
-            case 'exp':
-                print(int(arg1) ** int(arg2))
+            case 'exp' | 'pow':
+                print(parse(arg1) ** parse(arg2))
 
-    def isqrt(self, arg: str):
-        print(floor(sqrt(int(arg))))
+    def sqrt(self, arg: str):
+        r = parse(arg)
+        print(Rational(floor(sqrt(r.numerator)), floor(sqrt(r.denominator))))
 
     def process_command(self, cmd: str):
         match split_command(cmd):
@@ -129,7 +131,8 @@ class DefaultGame(Game):
                 'sub' |
                 'div' |
                 'mod' |
-                'exp'
+                'exp' |
+                'pow'
                   ) as operation, arg1, arg2):
                 try:
                     self.arithmetic(operation, arg1, arg2)
@@ -139,16 +142,17 @@ class DefaultGame(Game):
                       'sub' |
                       'div' |
                       'mod' |
-                      'exp'
+                      'exp' |
+                      'pow'
                   ) as operation, *_):
                 self.handle_invalid_usage(operation)
-            case ('isqrt', arg):
+            case ('sqrt', arg):
                 try:
-                    self.isqrt(arg)
+                    self.sqrt(arg)
                 except ValueError:
-                    self.handle_invalid_usage('isqrt')
-            case ('isqrt', *_):
-                self.handle_invalid_usage('isqrt')
+                    self.handle_invalid_usage('sqrt')
+            case ('sqrt', *_):
+                self.handle_invalid_usage('sqrt')
             case ('echo', *text):
                 print(' '.join(text))
             case _:

@@ -28,13 +28,13 @@ default_help = (
     Command('games', ('games',), description='List all available games.'),
     Command('start', ('start <game_id>',), aliases=('play',), description='Start a game by its id(not name!). Use "games" to get a list of all available games and their ids.'),
     Command('stop', ('stop',), description='Stop the current game.'),
-    Command('add', ('add <args>',), description='Add two or more integers.'),
-    Command('sub', ('sub <arg1> <arg2>',), description='Subtract two integers.'),
-    Command('mul', ('mul <args>',), description='Multiply two or more integers.'),
-    Command('div', ('div <arg1> <arg2>',), description='Floor divide two integers.'),
+    Command('add', ('add <args>',), description='Add two or more rationals.'),
+    Command('sub', ('sub <arg1> <arg2>',), description='Subtract two rationals.'),
+    Command('mul', ('mul <args>',), description='Multiply two or more rationals.'),
+    Command('div', ('div <arg1> <arg2>',), description='Floor divide two rationals.'),
     Command('mod', ('mod <arg1> <arg2>',), description='Modulo two integers. Second argument is the modulus.'),
-    Command('exp', ('exp <arg1> <arg2>',), description='Raise one integer to the power of another.'),
-    Command('isqrt', ('isqrt <arg>',), description='Floored square root of integers.'),
+    Command('exp', ('exp <arg1> <arg2>',), aliases=('pow',), description='Rational power of two rationals.'),
+    Command('sqrt', ('sqrt <arg>',), description='Rational square root of rationals.'),
     Command('echo', ('echo <text>',), description='Echos text.')
 )
 
