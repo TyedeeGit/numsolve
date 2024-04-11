@@ -25,8 +25,9 @@ from typing import Optional
 from numsolve.gamelib.command import Command, split_command
 from numsolve.gamelib.game import Game, default_help
 from numsolve.gamelib.polynomial import Polynomial, PolynomialFactory, find_factory, ALL_POLYNOMIAL_FACTORIES
+from numsolve.gamelib.file import get_settings_file
 
-SETTINGS_FILE = 'numsolve/settings/polysolve.json'
+SETTINGS_FILE = get_settings_file('polysolve')
 
 class Polysolve(Game):
     _id = 'polysolve'
@@ -48,7 +49,7 @@ class Polysolve(Game):
     def __init__(self, _default_game: Game):
         super().__init__(_default_game)
         self.current_mode = 'default'
-        self.current_difficulty = "1"
+        self.current_difficulty = '1'
         self.current_polynomial: Optional[Polynomial] = None
         self.current_factory: Optional[PolynomialFactory] = None
         self.start_time = 0
