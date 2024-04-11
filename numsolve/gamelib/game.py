@@ -35,6 +35,8 @@ default_help = (
     Command('mod', ('mod <arg1> <arg2>',), description='Modulo two integers. Second argument is the modulus.'),
     Command('exp', ('exp <arg1> <arg2>',), aliases=('pow',), description='Rational power of two rationals.'),
     Command('sqrt', ('sqrt <arg>',), description='Rational square root of rationals.'),
+    Command('fraction', ('fraction <decimal>',), aliases=('frac',), description='Convert decimal to fraction'),
+    Command('decimal', ('decimal <fraction> <places>',), aliases=('deci',), description='Convert fraction to decimal'),
     Command('echo', ('echo <text>',), description='Echos text.')
 )
 

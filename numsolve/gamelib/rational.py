@@ -40,13 +40,16 @@ class Rational(RationalNumber):
             n *= -1
             d *= -1
         elif d == 0:
-            raise ValueError("Division by 0")
+            raise ZeroDivisionError("Division by 0")
         if math.remainder(n, d) == 0:
             self._numerator = int(n / d)
             self._denominator = 1
         else:
             self._numerator = int(n / math.gcd(n, d))
             self._denominator = int(d / math.gcd(n, d))
+
+    def __float__(self):
+        return self.numerator / self.denominator
 
     def __abs__(self):
         return Rational(abs(self.numerator), self.denominator)

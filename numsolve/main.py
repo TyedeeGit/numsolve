@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from math import prod, sqrt, floor
+from decimal import Decimal
 from typing import Optional
 from games.all_games import ALL_GAMES
 from gamelib.command import unknown_command, TYPE_HELP_MSG, split_command
@@ -49,27 +50,39 @@ class DefaultGame(Game):
             self.current_game = None
 
     def add_or_multiply(self, operation: str, *operands: str):
-        if len(operands) < 2:
-            raise ValueError('Two or more arguments required!')
-        if operation == 'add':
-            print(sum(parse(operand) for operand in operands))
-        else:
-            print(prod(parse(operand) for operand in operands))
+        try:
+            if len(operands) < 2:
+                raise ValueError('Two or more arguments required!')
+            if operation == 'add':
+                print(sum(parse(operand) for operand in operands))
+            else:
+                print(prod(parse(operand) for operand in operands))
+        except OverflowError:
+            print('Result or input too big!')
+
 
     def arithmetic(self, operation: str, arg1: str, arg2: str):
-        match operation:
-            case 'sub':
-                print(parse(arg1) - parse(arg2))
-            case 'div':
-                print(parse(arg1) / parse(arg2))
-            case 'mod':
-                print(int(arg1) % int(arg2))
-            case 'exp' | 'pow':
-                print(parse(arg1) ** parse(arg2))
+        try:
+            match operation:
+                case 'sub':
+                    print(parse(arg1) - parse(arg2))
+                case 'div':
+                    print(parse(arg1) / parse(arg2))
+                case 'mod':
+                    print(int(arg1) % int(arg2))
+                case 'exp' | 'pow':
+                    print(parse(arg1) ** parse(arg2))
+        except OverflowError:
+            print('Result or input too big!')
+        except ZeroDivisionError:
+            print('Division by zero!')
 
     def sqrt(self, arg: str):
-        r = parse(arg)
-        print(Rational(floor(sqrt(r.numerator)), floor(sqrt(r.denominator))))
+        try:
+            r = parse(arg)
+            print(Rational(floor(sqrt(r.numerator)), floor(sqrt(r.denominator))))
+        except OverflowError:
+            print('Input too big!')
 
     def process_command(self, cmd: str):
         match split_command(cmd):
@@ -152,6 +165,26 @@ class DefaultGame(Game):
                     self.handle_invalid_usage('sqrt')
             case ('sqrt', *_):
                 self.handle_invalid_usage('sqrt')
+            case (('fraction' | 'frac'), decimal):
+                try:
+                    integer, fractional = decimal.split('.')
+                    fraction = Rational(int(fractional), 10**len(fractional)) + Rational(int(integer), 1)
+                    print(fraction)
+                except OverflowError:
+                    print('Input too big!')
+                except ValueError:
+                    print('Invalid input!')
+            case (('fraction' | 'frac'), *_):
+                self.handle_invalid_usage('fraction')
+            case (('decimal' | 'deci'), fraction, places):
+                try:
+                    print(round(parse(fraction), int(places)))
+                except OverflowError:
+                    print('Input too big!')
+                except ValueError:
+                    print('Invalid input!')
+            case (('decimal' | 'deci'), *_):
+                self.handle_invalid_usage('decimal')
             case ('echo', *text):
                 print(' '.join(text))
             case _:
