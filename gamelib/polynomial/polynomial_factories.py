@@ -1,5 +1,5 @@
 from typing import Type, Optional
-from gamelib.polynomial import PolynomialFactory, Polynomial
+from .polynomial import PolynomialFactory, Polynomial
 from gamelib.primes import get_primes_in_range
 from random import randint
 
