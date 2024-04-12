@@ -45,7 +45,7 @@ class DefaultGame(Game):
             return
         verify = input(
             f'Are you sure you want to stop playing: {self.current_game._name} [{self.current_game._id}]? (yes/no) ')
-        if verify.lower() == 'yes':
+        if verify.lower() in {'yes', 'y'}:
             self.current_game.stop_game()
             print(f'Stopped the current game')
             self.current_game = None
