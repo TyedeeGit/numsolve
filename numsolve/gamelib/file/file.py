@@ -1,6 +1,6 @@
 import os
 
-WORKING_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', 'numsolve/'))
+WORKING_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../', 'numsolve/'))
 SETTINGS_DIR = os.path.join(WORKING_DIR, 'settings/')
 SAVES_DIR = os.path.join(WORKING_DIR, 'saves/')
 
