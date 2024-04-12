@@ -103,9 +103,15 @@ class PrimeFactors(Game):
             case ('difficulty' | 'diff', *_):
                 self.handle_invalid_usage('difficulty')
             case ('check' | 'c', *factors):
-                self.check_factors(*factors)
+                if self.number != 1:
+                    self.check_factors(*factors)
+                else:
+                    print('No problem to check answers for!')
             case ('answer' | 'ans', *_):
-                self.give_answer()
+                if self.number != 1:
+                    self.give_answer()
+                else:
+                    print('No problem to give up on!')
             case _:
                 return False
         return True
