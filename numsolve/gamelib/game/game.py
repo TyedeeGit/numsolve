@@ -34,8 +34,8 @@ default_help = (
     Command('div', ('div <arg1> <arg2>',), description='Floor divide two rationals.'),
     Command('mod', ('mod <arg1> <arg2>',), description='Modulo two integers. Second argument is the modulus.'),
     Command('exp', ('exp <arg1> <arg2>',), aliases=('pow',), description='Rational power of two rationals.'),
-    Command('sqrt', ('sqrt <arg>',), description='Rational square root of rationals.'),
-    Command('fraction', ('fraction <decimal>',), aliases=('frac',), description='Convert decimal to fraction'),
+    Command('sqrt', ('sqrt <arg>',), description='"Integer" square root of rationals: isqrt(n)/isqrt(d).'),
+    Command('fraction', ('fraction <number>',), aliases=('frac',), description='Convert number to fraction'),
     Command('decimal', ('decimal <fraction> <places>',), aliases=('deci',), description='Convert fraction to decimal'),
     Command('echo', ('echo <text>',), description='Echos text.')
 )
@@ -64,7 +64,7 @@ class Game:
 
     def get_command_by_name(self, cmd_name: str) -> Command:
         for cmd in self.help:
-            if cmd.name == cmd_name:
+            if cmd.name == cmd_name or cmd_name in cmd.aliases:
                 return cmd
 
     @property

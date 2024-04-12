@@ -24,7 +24,7 @@ from abc import abstractmethod
 from typing import Union, overload, Any
 from numbers import Rational as RationalNumber
 
-Rationalizable = Union['Rational', int, RationalNumber]
+Rationalizable = Union['Rational', int, RationalNumber, float]
 
 class Rational(RationalNumber):
     @property
@@ -35,18 +35,23 @@ class Rational(RationalNumber):
     def denominator(self):
         return self._denominator
 
-    def __init__(self, n: int, d: int):
-        if d < 0:
-            n *= -1
-            d *= -1
-        elif d == 0:
-            raise ZeroDivisionError("Division by 0")
-        if math.remainder(n, d) == 0:
-            self._numerator = int(n / d)
-            self._denominator = 1
+    def __init__(self, n: Rationalizable, d: Rationalizable):
+        if isinstance(n, int) and isinstance(d, int):
+            if d < 0:
+                n *= -1
+                d *= -1
+            elif d == 0:
+                raise ZeroDivisionError("Division by 0")
+            if math.remainder(n, d) == 0:
+                self._numerator = int(n / d)
+                self._denominator = 1
+            else:
+                self._numerator = int(n / math.gcd(n, d))
+                self._denominator = int(d / math.gcd(n, d))
         else:
-            self._numerator = int(n / math.gcd(n, d))
-            self._denominator = int(d / math.gcd(n, d))
+            n_frac, d_frac = self.rationalize(n), self.rationalize(d)
+            frac: Rational = n_frac / d_frac
+            self._numerator, self._denominator = frac.numerator, frac.denominator
 
     def __float__(self):
         return self.numerator / self.denominator
@@ -145,6 +150,8 @@ class Rational(RationalNumber):
             return number
         if isinstance(number, int):
             return cls.from_int(number)
+        if isinstance(number, float):
+            return cls.from_float(number)
         if isinstance(number, RationalNumber):
             return cls.from_other_rational(number)
         raise ValueError('Number should be a rational or int!')
@@ -157,14 +164,24 @@ class Rational(RationalNumber):
     def from_other_rational(cls, number: RationalNumber) -> 'Rational':
         return cls(number.numerator, number.denominator)
 
+    @classmethod
+    def from_float(cls, number: float) -> 'Rational':
+        integer, fractional = str(number).split('.')
+        fraction = Rational(int(fractional), 10 ** len(fractional)) + Rational(int(integer), 1)
+        return fraction
+
+    @classmethod
+    def from_string(cls, number: str) -> 'Rational':
+        try:
+            return Rational(float(number), 1)
+        except ValueError:
+            split = number.split('/')
+            if len(split) != 2:
+                raise ValueError('String should be two integers or decimals separated by /, or just a decimal.')
+            return Rational(float(split[0]), float(split[1]))
+
 def parse(string: str) -> Rational:
-    try:
-        return Rational(int(string), 1)
-    except ValueError:
-        split = string.split('/')
-        if len(split) != 2:
-            raise ValueError('String should be two integers separated by /, or just an integer.')
-        return Rational(int(split[0]), int(split[1]))
+    return Rational.from_string(string)
 
 def main():
     test = parse('3/4')

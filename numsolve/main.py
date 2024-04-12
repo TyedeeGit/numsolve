@@ -166,11 +166,9 @@ class DefaultGame(Game):
                     self.handle_invalid_usage('sqrt')
             case ('sqrt', *_):
                 self.handle_invalid_usage('sqrt')
-            case (('fraction' | 'frac'), decimal):
+            case (('fraction' | 'frac'), number):
                 try:
-                    integer, fractional = decimal.split('.')
-                    fraction = Rational(int(fractional), 10**len(fractional)) + Rational(int(integer), 1)
-                    print(fraction)
+                    print(parse(number))
                 except OverflowError:
                     print('Input too big!')
                 except ValueError:
