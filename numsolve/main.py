@@ -19,18 +19,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import fixpath
 from math import prod, sqrt, floor
-from command import Command, unknown_command, TYPE_HELP_MSG
-from game import Game
-from all_games import ALL_GAMES
+from decimal import Decimal
 from typing import Optional
+from games.all_games import ALL_GAMES
+from gamelib.command import unknown_command, TYPE_HELP_MSG, split_command
+from gamelib.game import Game
+from gamelib.rational import Rational, parse
 
 CONTRIBUTORS = (
     'Tyedee',
     'Ammar Abbas'
 )
-
-
 
 
 class DefaultGame(Game):
@@ -40,41 +41,55 @@ class DefaultGame(Game):
 
     def stop_game(self):
         if not self.current_game:
-            print('No game to stop!')
+            print('No game to stop! Did you mean "quit"?')
             return
-        verify = input('Are you sure you want to stop? (yes/no) ')
-        if verify.lower() == 'yes':
+        verify = input(
+            f'Are you sure you want to stop playing: {self.current_game._name} [{self.current_game._id}]? (yes/no) ')
+        if verify.lower() in {'yes', 'y'}:
             self.current_game.stop_game()
-            print(f'Stopped playing "{self.current_game._name}"')
+            print(f'Stopped the current game')
             self.current_game = None
 
     def add_or_multiply(self, operation: str, *operands: str):
-        if len(operands) < 2:
-            raise ValueError('Two or more arguments required!')
-        if operation == 'add':
-            print(sum(int(operand) for operand in operands))
-        else:
-            print(prod(int(operand) for operand in operands))
+        try:
+            if len(operands) < 2:
+                raise ValueError('Two or more arguments required!')
+            if operation == 'add':
+                print(sum(parse(operand) for operand in operands))
+            else:
+                print(prod(parse(operand) for operand in operands))
+        except OverflowError:
+            print('Result or input too big!')
+
 
     def arithmetic(self, operation: str, arg1: str, arg2: str):
-        match operation:
-            case 'sub':
-                print(int(arg1) - int(arg2))
-            case 'div':
-                print(int(arg1) // int(arg2))
-            case 'mod':
-                print(int(arg1) % int(arg2))
-            case 'exp':
-                print(int(arg1) ** int(arg2))
+        try:
+            match operation:
+                case 'sub':
+                    print(parse(arg1) - parse(arg2))
+                case 'div':
+                    print(parse(arg1) / parse(arg2))
+                case 'mod':
+                    print(int(arg1) % int(arg2))
+                case 'exp' | 'pow':
+                    print(parse(arg1) ** parse(arg2))
+        except OverflowError:
+            print('Result or input too big!')
+        except ZeroDivisionError:
+            print('Division by zero!')
 
-    def isqrt(self, arg: str):
-        print(floor(sqrt(int(arg))))
+    def sqrt(self, arg: str):
+        try:
+            r = parse(arg)
+            print(Rational(floor(sqrt(r.numerator)), floor(sqrt(r.denominator))))
+        except OverflowError:
+            print('Input too big!')
 
     def process_command(self, cmd: str):
-        match [part for part in cmd.split(' ') if part]:
+        match split_command(cmd):
             case ():
                 pass
-            case ('help',):
+            case ('help', ):
                 for command in self.help:
                     print(command)
             case ('help', command_name):
@@ -93,30 +108,30 @@ class DefaultGame(Game):
                 exit()
             case ('playing', *_):
                 if not self.current_game:
-                    print('You are not currently playing a game.')
+                    print('You are not currently playing a game. Type "games" for a list of games.')
                 else:
                     for game in ALL_GAMES:
-                        if game._name == self.current_game._name:
-                            print(f'Currently playing: {self.current_game._name}')
+                        if game._id == self.current_game._id:
+                            print(f'Currently playing: {self.current_game._name} [{self.current_game._id}]')
                             print(self.current_game._about)
                             break
             case ('games', *_):
                 print('Available games: ')
                 for game in ALL_GAMES:
-                    print(f'    {game._name}: {game._about}')
-            case ('start', game_name):
+                    print(f'    {game._name}:\n        About: {game._about}\n        ID: {game._id}')
+            case ('start' | 'play', game_id):
                 if self.current_game:
                     print('Stop the current game before starting a new one.')
                     return True
                 for game in ALL_GAMES:
-                    if game._name == game_name:
+                    if game._id == game_id:
                         self.current_game = game(self)
-                        print(f'Currently playing: {self.current_game._name}')
+                        print(f'Currently playing: {self.current_game._name} [{self.current_game._id}]')
                         print(self.current_game._about)
                         break
                 if not self.current_game:
-                    print(f'Unknown game "{game_name}". Type "games" for a list of games.')
-            case ('start', *_):
+                    print(f'Unknown game id "{game_id}". Type "games" for a list of games and their ids.')
+            case ('start' | 'play', *_):
                 self.handle_invalid_usage('start')
             case ('stop', *_):
                 self.stop_game()
@@ -126,29 +141,49 @@ class DefaultGame(Game):
                 except ValueError:
                     self.handle_invalid_usage(operation)
             case ((
-                'sub' |
-                'div' |
-                'mod' |
-                'exp'
+                  'sub' |
+                  'div' |
+                  'mod' |
+                  'exp' |
+                  'pow'
                   ) as operation, arg1, arg2):
                 try:
                     self.arithmetic(operation, arg1, arg2)
                 except ValueError:
                     self.handle_invalid_usage(operation)
             case ((
-                      'sub' |
-                      'div' |
-                      'mod' |
-                      'exp'
+                  'sub' |
+                  'div' |
+                  'mod' |
+                  'exp' |
+                  'pow'
                   ) as operation, *_):
                 self.handle_invalid_usage(operation)
-            case ('isqrt', arg):
+            case ('sqrt', arg):
                 try:
-                    self.isqrt(arg)
+                    self.sqrt(arg)
                 except ValueError:
-                    self.handle_invalid_usage('isqrt')
-            case ('isqrt', *_):
-                self.handle_invalid_usage('isqrt')
+                    self.handle_invalid_usage('sqrt')
+            case ('sqrt', *_):
+                self.handle_invalid_usage('sqrt')
+            case (('fraction' | 'frac'), number):
+                try:
+                    print(parse(number))
+                except OverflowError:
+                    print('Input too big!')
+                except ValueError:
+                    print('Invalid input!')
+            case (('fraction' | 'frac'), *_):
+                self.handle_invalid_usage('fraction')
+            case (('decimal' | 'deci'), fraction, places):
+                try:
+                    print(round(parse(fraction), int(places)))
+                except OverflowError:
+                    print('Input too big!')
+                except ValueError:
+                    print('Invalid input!')
+            case (('decimal' | 'deci'), *_):
+                self.handle_invalid_usage('decimal')
             case ('echo', *text):
                 print(' '.join(text))
             case _:
@@ -156,15 +191,16 @@ class DefaultGame(Game):
         return True
 
     def run(self):
-        print('numsolve')
+        print('Numsolve')
         print(f'MIT License (c) 2024 {", ".join(CONTRIBUTORS)}')
         print(TYPE_HELP_MSG)
         while True:
-            cmd = input('> ')
             recognized = False
             if not self.current_game:
+                cmd = input('> ')
                 recognized = self.process_command(cmd)
             else:
+                cmd = input('>> ')
                 recognized = self.current_game.process_command(cmd)
             if not recognized:
                 unknown_command()

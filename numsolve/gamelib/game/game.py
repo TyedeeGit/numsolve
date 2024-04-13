@@ -19,30 +19,31 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Callable
-from abc import ABC, abstractmethod
-from command import Command, invalid_usage
+from numsolve.gamelib.command import Command, invalid_usage
 
 default_help = (
-    Command('help', ('help', 'help <cmd>'), description='Get information about a command, or list all commands.'),
+    Command('help', ('help', 'help <cmd>'), description='Get information about a command, or list all valid commands. Extra game specific commands may appear.'),
     Command('exit', ('exit',), aliases=('quit',), description='Exit the program.'),
     Command('playing', ('playing',), description='Get information about the game you are currently playing'),
     Command('games', ('games',), description='List all available games.'),
-    Command('start', ('start <game_name>',), description='Start a game. Use "games" to get a list of all available games.'),
+    Command('start', ('start <game_id>',), aliases=('play',), description='Start a game by its id(not name!). Use "games" to get a list of all available games and their ids.'),
     Command('stop', ('stop',), description='Stop the current game.'),
-    Command('add', ('add <args>',), description='Add two or more numbers.'),
-    Command('sub', ('sub <arg1> <arg2>',), description='Subtract two numbers.'),
-    Command('mul', ('mul <args>',), description='Multiply two or more numbers.'),
-    Command('div', ('div <arg1> <arg2>',), description='Floor divides two numbers.'),
-    Command('mod', ('mod <arg1> <arg2>',), description='Modulo operation.'),
-    Command('exp', ('exp <arg1> <arg2>',), description='Raise one number to the power of another.'),
-    Command('isqrt', ('isqrt <arg>',), description='Floored square root.'),
-    Command('echo', ('echo <text>',), description='Echos it\'s arguments.')
+    Command('add', ('add <args>',), description='Add two or more rationals.'),
+    Command('sub', ('sub <arg1> <arg2>',), description='Subtract two rationals.'),
+    Command('mul', ('mul <args>',), description='Multiply two or more rationals.'),
+    Command('div', ('div <arg1> <arg2>',), description='Floor divide two rationals.'),
+    Command('mod', ('mod <arg1> <arg2>',), description='Modulo two integers. Second argument is the modulus.'),
+    Command('exp', ('exp <arg1> <arg2>',), aliases=('pow',), description='Rational power of two rationals.'),
+    Command('sqrt', ('sqrt <arg>',), description='"Integer" square root of rationals: isqrt(n)/isqrt(d).'),
+    Command('fraction', ('fraction <number>',), aliases=('frac',), description='Convert number to fraction'),
+    Command('decimal', ('decimal <fraction> <places>',), aliases=('deci',), description='Convert fraction to decimal'),
+    Command('echo', ('echo <text>',), description='Echos text.')
 )
 
 
-class Game(ABC):
-    _name: str = 'game'
+class Game:
+    _id: str = 'game'
+    _name: str = 'Base Game'
     _about: str = 'Replace with a description of your game.'
     _help: tuple[Command] = default_help
 
@@ -50,22 +51,20 @@ class Game(ABC):
         self._default_game = _default_game
 
     def __eq__(self, other: 'Game'):
-        return self._name == other._name and self._about == other._about
+        return self._id == other._id and self._about == other._about
 
     def stop_game(self):
         pass
 
     def process_command(self, cmd: str) -> bool:
-        if self._default_game.process_command(cmd):
-            return True
-        return False
+        return self._default_game.process_command(cmd)
 
     def handle_invalid_usage(self, cmd_name: str):
         print(invalid_usage(self.get_command_by_name(cmd_name)))
 
     def get_command_by_name(self, cmd_name: str) -> Command:
         for cmd in self.help:
-            if cmd.name == cmd_name:
+            if cmd.name == cmd_name or cmd_name in cmd.aliases:
                 return cmd
 
     @property
